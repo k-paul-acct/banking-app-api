@@ -1,0 +1,192 @@
+openapi: 3.0.3
+info:
+  title: Banking App API
+  version: 1.0.0
+tags:
+  - name: auth
+    description: Everything about authentication and authorization
+  - name: employee
+    description: Operations about employee
+paths:
+  /auth/signin:
+    post:
+      tags:
+        - auth
+      summary: Logs user into the system
+      description: ''
+      requestBody:
+        $ref: '#/components/requestBodies/SignIn'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid username/password supplied
+  /auth/signout:
+    post:
+      tags:
+        - auth
+      summary: Logs out current logged in user session
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: successful operation
+  /employee/{id}:
+    get:
+      tags:
+        - employee
+      summary: Get employee by id
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          description: 'Employee ID'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '400':
+          description: Invalid id supplied
+        '404':
+          description: Employee not found
+    put:
+      tags:
+        - employee
+      summary: Update employee data
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          description: Employee ID to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateEmployee'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '400':
+          description: Invalid data supplied
+        '404':
+          description: Employee not found
+    delete:
+      tags:
+        - employee
+      summary: Delete employee
+      parameters:
+        - name: id
+          in: path
+          description: Employee ID to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid id supplied
+        '404':
+          description: Employee not found
+components:
+  schemas:
+    Employee:
+      type: object
+      properties:
+        id:
+          type: string
+        login:
+          type: string
+          example: theUser
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+        phone:
+          type: string
+          example: '12345'
+        role:
+          type: string
+  requestBodies:
+    SignIn:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              login:
+                type: string
+              password:
+                type: string
+    CreateEmployee:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              login:
+                type: string
+                example: theUser
+              firstName:
+                type: string
+                example: John
+              lastName:
+                type: string
+                example: James
+              email:
+                type: string
+                example: john@email.com
+              password:
+                type: string
+                example: '12345'
+              phone:
+                type: string
+                example: '12345'
+    UpdateEmployee:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              firstName:
+                type: string
+                example: John
+              lastName:
+                type: string
+                example: James
+              email:
+                type: string
+                example: john@email.com
+              phone:
+                type: string
+                example: '12345'
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: x-api-key
+      in: header
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sign
