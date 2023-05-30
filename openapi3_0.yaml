@@ -11,7 +11,109 @@ tags:
     description: Operations with employee bank account
   - name: cashback
     description: Cashback overview
+  - name: common
+    description: Generally available endpoint
+  - name: admin
+    description: Only admins allowed endpoints
 paths:
+  /api/regions:
+    get:
+      tags:
+        - common
+      summary: All available regions
+      description: ''
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Region'
+    post:
+      tags:
+        - admin
+      summary: Add region
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Region'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Region'
+        '400':
+          description: validation error
+        '401':
+          description: unauthorized
+        '403':
+          description: not allowed
+        '409':
+          description: conflict occured
+  /api/regions/{code}:
+    get:
+      tags:
+        - common
+      summary: Get region by code
+      description: ''
+      parameters:
+        - in: path
+          name: code
+          description: Region code
+          required: true
+          schema:
+            type: number
+            example: 45
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Region'
+        '404':
+          description: not found
+    delete:
+      tags:
+        - admin
+      summary: Delete region by code
+      description: ''
+      parameters:
+        - in: path
+          name: code
+          description: Region code
+          required: true
+          schema:
+            type: number
+            example: 45
+      responses:
+        '200':
+          description: successful operation
+        '401':
+          description: unauthorized
+        '403':
+          description: not allowed
+        '404':
+          description: not found
+  /auth/signup:
+    post:
+      tags:
+        - auth
+      summary: Register user
+      description: ''
+      requestBody:
+        $ref: '#/components/requestBodies/SignUp'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: validation error
   /auth/signin:
     post:
       tags:
@@ -199,6 +301,18 @@ paths:
           description: Invalid data supplied
 components:
   schemas:
+    Region:
+      type: object
+      properties:
+        code:
+          type: number
+          description: Region code from Russian Classification on Objects of
+            Administrative Division
+          example: 45
+        regionName:
+          type: string
+          description: Region name in Russian
+          example: Москва
     Transaction:
       type: object
       properties:
@@ -289,10 +403,45 @@ components:
           schema:
             type: object
             properties:
-              login:
+              phone:
+                type: string
+                description: Phone number in format '+7AAABBBCCDD'
+              password:
+                type: string
+                format: password
+    SignUp:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              firstName:
+                type: string
+              secondName:
+                type: string
+              patronymic:
+                type: string
+              dateOfBirth:
+                type: string
+                format: date
+              sex:
+                type: string
+                enum:
+                  - 'male'
+                  - 'female'
+              phone:
+                type: string
+                description: Phone number in format '+7AAABBBCCDD'
+              passportNumber:
                 type: string
               password:
                 type: string
+              passwordConfirmation:
+                type: string
+              region:
+                type: string
+                description: Region enum value from another endpoint.
     CreateEmployee:
       description: ''
       content:
